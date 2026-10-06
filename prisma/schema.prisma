@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  phone      String   @unique
+  password   String
+  referralId String   @unique
+  referredBy String?
+  createdAt  DateTime @default(now())
+  wallet     Wallet?
+  orders     Order[]
+}
+
+model Wallet {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  balance      Float    @default(1.75)
+  pendingBonus Float    @default(0.00)
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Order {
+  id         String   @id @default(uuid())
+  userId     String
+  itemTitle  String
+  quantity   Int      @default(3)
+  amountUSD  Float
+  status     String   @default("ESCROW_HOLD")
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

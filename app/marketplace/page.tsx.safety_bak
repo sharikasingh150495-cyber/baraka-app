@@ -1,0 +1,1438 @@
+﻿"use client";
+
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import Link from "next/link";
+
+export type LanguageCode = "KM" | "EN" | "ZH" | "TH" | "VI" | "KO" | "JA";
+
+interface Translations {
+  liveDesk: string;
+  activeMerchants: string;
+  borderPassOpen: string;
+  nextShuttle: string;
+  tagline: string;
+  vipDesk: string;
+  logisticsBadge: string;
+  selectTier: string;
+  retailSample: string;
+  retailSub: string;
+  resellerSub: string;
+  cartonSub: string;
+  fastPassTitle: string;
+  fastPassSub: string;
+  selectedOrder: string;
+  logisticsFee: string;
+  escrowBadge: string;
+  escrowFree: string;
+  marginSaved: string;
+  totalDue: string;
+  payKhqr: string;
+  escrowPromise: string;
+  scanHelp: string;
+  simulatePay: string;
+  paymentLocked: string;
+  paymentSuccessDesc: string;
+  carrierLabel: string;
+  trackingLabel: string;
+  statusLabel: string;
+  statusApproved: string;
+  doneBtn: string;
+  navMarket: string;
+  navFeed: string;
+  navStudio: string;
+  navWallet: string;
+  claimedLabel: string;
+  cartonsLeft: string;
+  viewingNow: string;
+  filterAll: string;
+  batchFloorRate: string;
+  highDemand: string;
+  tiktokHit: string;
+  factoryBottom: string;
+  retailRate: string;
+}
+
+const UI_TRANSLATIONS: Record<LanguageCode, Translations> = {
+  KM: {
+    liveDesk: "បញ្ជរពាណិជ្ជកម្មផ្ទាល់:",
+    activeMerchants: "អ្នកលក់ដុំ ២,៤៨០ នាក់នៅផ្សារអូឡាំពិក និងផ្សារអូរឫស្សី",
+    borderPassOpen: "ច្រកព្រំដែនពិសេស: បើកដំណើរការ",
+    nextShuttle: "ជើងដឹកបន្ទាប់: ០២ម៉ោង ៣៥នាទី",
+    tagline: "បណ្តាញផ្គត់ផ្គង់ពីរោងចក្រផ្ទាល់ • ប្រភពទំនិញ ៦ ប្រទេស • តម្លៃបោះដុំពិសេស",
+    vipDesk: "តេឡេក្រាម VIP បោះដុំ",
+    logisticsBadge: "ដឹកជញ្ជូន: VET Express • J&T • ZTO",
+    selectTier: "ជ្រើសរើសកម្រិតទិញ:",
+    retailSample: "១ ដុំ (គំរូសាកល្បង)",
+    retailSub: "សម្រាប់អ្នកទិញរាយ / សាកល្បងគុណភាព",
+    resellerSub: "សម្រាប់ហាងលក់រាយ និងអាជីវកម្មអនឡាញ",
+    cartonSub: "សម្រាប់អ្នកលក់ដុំផ្សារអូឡាំពិក និងអូរឫស្សី",
+    fastPassTitle: "⚡ សេវាដឹកជញ្ជូនលឿនពិសេស",
+    fastPassSub: "VET Express • J&T • ZTO ឆ្លងកាត់ព្រំដែនរហ័ស",
+    selectedOrder: "ការបញ្ជាទិញ:",
+    logisticsFee: "សេវាដឹកជញ្ជូន និងគយព្រំដែន:",
+    escrowBadge: "ការការពារប្រព័ន្ធបាគង (Escrow):",
+    escrowFree: "ឥតគិតថ្លៃ (ប្រូម៉ូសិន)",
+    marginSaved: "ប្រាក់ចំណេញបោះដុំដែលបានសន្សំ:",
+    totalDue: "ទឹកប្រាក់សរុបត្រូវបង់:",
+    payKhqr: "ទូទាត់តាមបាគង KHQR Escrow",
+    escrowPromise: "🔒 ការពារដោយសុវត្ថិភាព ១០០%។ ប្រាក់នឹងផ្ញើជូនរោងចក្រក្រោយពេលស្កេនបាកូដដឹកជញ្ជូនរួចរាល់។",
+    scanHelp: "ស្កេនជាមួយ ABA, Wing, TrueMoney ឬ អេស៊ីលីដា",
+    simulatePay: "⚡ សាកល្បងស្កេនទូទាត់តាមធនាគារ",
+    paymentLocked: "ទឹកប្រាក់ត្រូវបានរក្សាទុកដោយសុវត្ថិភាព!",
+    paymentSuccessDesc: "ទំនិញត្រូវបានបញ្ជូនទៅកាន់ក្រុមហ៊ុនដឹកជញ្ជូនលឿន។",
+    carrierLabel: "ក្រុមហ៊ុនដឹកជញ្ជូន:",
+    trackingLabel: "លេខតាមដានទំនិញ:",
+    statusLabel: "ស្ថានភាព:",
+    statusApproved: "ឯកសារគយត្រូវបានអនុម័ត",
+    doneBtn: "រួចរាល់ & ត្រឡប់ទៅទិញទំនិញ",
+    navMarket: "ទីផ្សារទំនិញ",
+    navFeed: "វីដេអូ TikTok",
+    navStudio: "បង្កើតវីដេអូ AI",
+    navWallet: "កាបូបប្រាក់ Escrow",
+    claimedLabel: "បានកក់ ៨៤%",
+    cartonsLeft: "នៅសល់តែ ៦ កេសធំប៉ុណ្ណោះក្នុងតម្លៃនេះ",
+    viewingNow: "អ្នកលក់កំពុងទស្សនាពេលនេះ",
+    filterAll: "ប្រភពដើមទាំងអស់",
+    batchFloorRate: "តម្លៃបាតពីរោងចក្រផ្ទាល់",
+    highDemand: "🔥 តម្រូវការខ្ពស់",
+    tiktokHit: "TIKTOK ពេញនិយម",
+    factoryBottom: "តម្លៃបាតពីរោងចក្រ",
+    retailRate: "តម្លៃរាយ",
+  },
+  EN: {
+    liveDesk: "Live Cross-Border Desk:",
+    activeMerchants: "2,480 Active Wholesalers in Olympic & Orussey Hubs",
+    borderPassOpen: "Border Fast-Pass: OPEN",
+    nextShuttle: "Next Shuttle: 02h 35m",
+    tagline: "Direct Cross-Border Factory Matrix • 6 Origin Countries • Olympic & Orussey Tier Pricing",
+    vipDesk: "VIP Telegram Bulk Desk",
+    logisticsBadge: "Logistics: VET Express • J&T • ZTO",
+    selectTier: "Select Purchase Tier:",
+    retailSample: "1 Pc (Retail Sample)",
+    retailSub: "Direct buyer / Testing sample",
+    resellerSub: "Retail shops & boutique resellers",
+    cartonSub: "Olympic & Orussey Wholesalers",
+    fastPassTitle: "⚡ Priority Logistics Fast-Pass",
+    fastPassSub: "VET Express • J&T • ZTO Border Express clearance",
+    selectedOrder: "Selected Order:",
+    logisticsFee: "Border Logistics & Clearance:",
+    escrowBadge: "Bakong Escrow Protection:",
+    escrowFree: "FREE (Promotional)",
+    marginSaved: "Wholesale Margin Saved:",
+    totalDue: "Total Amount Due:",
+    payKhqr: "Pay via Bakong KHQR Escrow",
+    escrowPromise: "🔒 100% Escrow Protection. Funds released to supplier only after VET / J&T / ZTO delivery barcode scan.",
+    scanHelp: "Scan with ABA Mobile, Wing, TrueMoney or ACLEDA",
+    simulatePay: "⚡ Simulate Mobile Bank Scan & Pay",
+    paymentLocked: "Payment Locked in Escrow!",
+    paymentSuccessDesc: "Priority dispatch scheduled via cross-border carrier.",
+    carrierLabel: "Carrier:",
+    trackingLabel: "Tracking Code:",
+    statusLabel: "Status:",
+    statusApproved: "Customs Manifest Approved",
+    doneBtn: "Done & Return to Market",
+    navMarket: "Market",
+    navFeed: "TikTok Feed",
+    navStudio: "AI Studio",
+    navWallet: "Escrow Wallet",
+    claimedLabel: "84% Claimed",
+    cartonsLeft: "Only 6 Master Cartons remaining at this slab",
+    viewingNow: "Resellers Viewing Now",
+    filterAll: "All Origins",
+    batchFloorRate: "Factory Batch Floor Rate",
+    highDemand: "🔥 High Demand",
+    tiktokHit: "TIKTOK LIVE VIRAL",
+    factoryBottom: "Factory Bottom Price",
+    retailRate: "Retail Rate",
+  },
+  ZH: {
+    liveDesk: "跨境实时交易台:",
+    activeMerchants: "奥林匹克和乌亚西市场 2,480 位批发商在线",
+    borderPassOpen: "绿色通关通道: 开启",
+    nextShuttle: "下班班车: 02小时35分",
+    tagline: "源头工厂跨境直供 • 6国供应链直通 • 金边批发商底价",
+    vipDesk: "Telegram VIP大宗采购",
+    logisticsBadge: "官方物流: VET Express • J&T • ZTO",
+    selectTier: "选择采购阶梯:",
+    retailSample: "1 件 (样品拿样)",
+    retailSub: "终端零售 / 样品检验",
+    resellerSub: "零售店与精品店批发",
+    cartonSub: "奥林匹克与乌亚西大宗批发",
+    fastPassTitle: "⚡ 优先极速通关通道",
+    fastPassSub: "VET Express • 极兔速递 • 中通跨境专线",
+    selectedOrder: "当前订单:",
+    logisticsFee: "跨境运费与清关费:",
+    escrowBadge: "Bakong KHQR 担保交易:",
+    escrowFree: "免费 (活动优惠)",
+    marginSaved: "已节省批发利润:",
+    totalDue: "应付总额:",
+    payKhqr: "通过 Bakong KHQR 担保支付",
+    escrowPromise: "🔒 100% 资金托管保护。物流扫码妥投后，资金方结算至供货商。",
+    scanHelp: "支持 ABA Mobile、Wing、TrueMoney、ACLEDA 等扫码",
+    simulatePay: "⚡ 模拟手机银行扫码支付",
+    paymentLocked: "货款已进入银行托管账户！",
+    paymentSuccessDesc: "跨境物流已排期，即将快速清关发货。",
+    carrierLabel: "承运方:",
+    trackingLabel: "运单追踪号:",
+    statusLabel: "物流状态:",
+    statusApproved: "海关舱单已核准",
+    doneBtn: "完成并返回市场",
+    navMarket: "批发市场",
+    navFeed: "TikTok带货视频",
+    navStudio: "AI视频工作室",
+    navWallet: "担保钱包",
+    claimedLabel: "已被抢购 84%",
+    cartonsLeft: "当前阶梯底价仅剩最后 6 整箱",
+    viewingNow: "位批发商正在浏览",
+    filterAll: "全部产地",
+    batchFloorRate: "工厂批次底价",
+    highDemand: "🔥 爆款热抢",
+    tiktokHit: "TIKTOK 爆款推荐",
+    factoryBottom: "工厂直供底价",
+    retailRate: "零售参考价",
+  },
+  TH: {
+    liveDesk: "ศูนย์ซื้อขายข้ามพรมแดนสด:",
+    activeMerchants: "ผู้ค้าส่ง 2,480 รายในตลาดโอลิมปิกและโอรูซี พนมเปญ",
+    borderPassOpen: "ช่องทางด่านพิเศษ: เปิดทำการ",
+    nextShuttle: "เที่ยวขนส่งถัดไป: 02 ชม. 35 นาที",
+    tagline: "สายตรงโรงงาน 6 ประเทศ • ราคาส่งตรงตลาดกัมพูชา",
+    vipDesk: "ฝ่ายสั่งซื้อล็อตใหญ่ VIP Telegram",
+    logisticsBadge: "โลจิสติกส์: VET Express • J&T • ZTO",
+    selectTier: "เลือกระดับการสั่งซื้อ:",
+    retailSample: "1 ชิ้น (ตัวอย่างทดลอง)",
+    retailSub: "สำหรับผู้ซื้อรายชิ้น / ตรวจสอบสินค้า",
+    resellerSub: "สำหรับร้านค้าย่อยและร้านค้าออนไลน์",
+    cartonSub: "ราคายกลังสำหรับผู้ค้าส่งรายใหญ่",
+    fastPassTitle: "⚡ บริการเคลียร์สินค้าด่วนพิเศษ",
+    fastPassSub: "VET Express • J&T • ZTO ผ่านด่านปอยเปต 24 ชม.",
+    selectedOrder: "ยอดสั่งซื้อที่เลือก:",
+    logisticsFee: "ค่าขนส่งและพิธีการศุลกากร:",
+    escrowBadge: "ระบบเงินฝากค้ำประกัน Bakong KHQR:",
+    escrowFree: "ฟรี (โปรโมชั่น)",
+    marginSaved: "ประหยัดกำไรราคาส่ง:",
+    totalDue: "ยอดรวมที่ต้องชำระ:",
+    payKhqr: "ชำระเงินปลอดภัยผ่าน Bakong KHQR Escrow",
+    escrowPromise: "🔒 ปลอดภัย 100% เงินจะโอนให้โรงงานเมื่อสแกนบาร์โค้ดส่งมอบสำเร็จเท่านั้น",
+    scanHelp: "สแกนด้วย ABA Mobile, Wing, TrueMoney หรือ ACLEDA",
+    simulatePay: "⚡ จำลองการสแกนจ่ายผ่านมือถือ",
+    paymentLocked: "เงินเข้าสู่ระบบค้ำประกันเรียบร้อย!",
+    paymentSuccessDesc: "จัดส่งสินค้าด่วนผ่านเครือข่ายโลจิสติกส์พรมแดนแล้ว",
+    carrierLabel: "ผู้ให้บริการขนส่ง:",
+    trackingLabel: "รหัสติดตามพัสดุ:",
+    statusLabel: "สถานะ:",
+    statusApproved: "ผ่านการอนุมัติศุลกากรแล้ว",
+    doneBtn: "เสร็จสิ้นและกลับสู่หน้าตลาด",
+    navMarket: "ตลาดค้าส่ง",
+    navFeed: "คลิป TikTok",
+    navStudio: "สตูดิโอวิดีโอ AI",
+    navWallet: "กระเป๋าเงิน Escrow",
+    claimedLabel: "จองแล้ว 84%",
+    cartonsLeft: "เหลือเพียง 6 ลังสุดท้ายในราคานี้",
+    viewingNow: "ร้านค้ากำลังดูอยู่นี้",
+    filterAll: "ทุกแหล่งผลิต",
+    batchFloorRate: "ราคาส่งหน้าโรงงาน",
+    highDemand: "🔥 สั่งซื้อจำนวนมาก",
+    tiktokHit: "สินค้าฮิต TIKTOK",
+    factoryBottom: "ราคาต่ำสุดจากโรงงาน",
+    retailRate: "ราคาปลีก",
+  },
+  VI: {
+    liveDesk: "Bàn giao dịch biên giới trực tiếp:",
+    activeMerchants: "2.480 đại lý bán buôn đang hoạt động tại chợ Olympic & Orussey",
+    borderPassOpen: "Thông quan biên giới Mộc Bài / Bavet: MỞ",
+    nextShuttle: "Chuyến xe tiếp theo: 02h 35m",
+    tagline: "Kết nối xưởng 6 quốc gia • Giá sỉ tận gốc cho thị trường Campuchia",
+    vipDesk: "Hỗ trợ đơn sỉ lớn qua Telegram VIP",
+    logisticsBadge: "Vận chuyển: VET Express • J&T • ZTO",
+    selectTier: "Chọn mức số lượng mua:",
+    retailSample: "1 Chiếc (Mẫu thử nghiệm)",
+    retailSub: "Khách mua lẻ / Kiểm tra chất lượng",
+    resellerSub: "Dành cho shop thời trang & nhà bán lẻ",
+    cartonSub: "Dành cho tổng kho & đại lý chợ đầu mối",
+    fastPassTitle: "⚡ Dịch vụ thông quan hỏa tốc 18h",
+    fastPassSub: "VET Express • J&T • ZTO chuyển phát nhanh biên giới",
+    selectedOrder: "Đơn đặt hàng:",
+    logisticsFee: "Phí vận chuyển và thông quan:",
+    escrowBadge: "Bảo đảm thanh toán ký quỹ Bakong KHQR:",
+    escrowFree: "MIỄN PHÍ (Khuyến mãi)",
+    marginSaved: "Lợi nhuận sỉ tiết kiệm:",
+    totalDue: "Tổng thanh toán:",
+    payKhqr: "Thanh toán qua ký quỹ Bakong KHQR",
+    escrowPromise: "🔒 Bảo vệ 100%. Tiền chỉ giải ngân cho xưởng khi quét mã giao hàng thành công.",
+    scanHelp: "Quét bằng ứng dụng ABA Mobile, Wing, TrueMoney hoặc ACLEDA",
+    simulatePay: "⚡ Giả lập quét mã thanh toán ngân hàng",
+    paymentLocked: "Tiền đã được khóa an toàn trong ký quỹ!",
+    paymentSuccessDesc: "Lô hàng đã được lên lịch chuyển phát ưu tiên.",
+    carrierLabel: "Đơn vị vận chuyển:",
+    trackingLabel: "Mã vận đơn:",
+    statusLabel: "Trạng thái:",
+    statusApproved: "Đã duyệt tờ khai hải quan",
+    doneBtn: "Hoàn tất & Quay lại sàn sỉ",
+    navMarket: "Chợ Sỉ",
+    navFeed: "Video TikTok",
+    navStudio: "AI Tạo Video",
+    navWallet: "Ví Ký Quỹ",
+    claimedLabel: "Đã đặt 84%",
+    cartonsLeft: "Chỉ còn 6 thùng cuối cùng ở mức giá sàn này",
+    viewingNow: "chủ shop đang xem lúc này",
+    filterAll: "Tất cả nguồn hàng",
+    batchFloorRate: "Giá sỉ xuất xưởng",
+    highDemand: "🔥 Nhu Cầu Cao",
+    tiktokHit: "HOT TREND TIKTOK",
+    factoryBottom: "Giá sàn xuất xưởng",
+    retailRate: "Giá bán lẻ",
+  },
+  KO: {
+    liveDesk: "실시간 국경 도매 데스크:",
+    activeMerchants: "올림픽 & 오루세이 시장 2,480개 도매상 온라인",
+    borderPassOpen: "국경 신속 통관: 개방",
+    nextShuttle: "다음 셔틀: 02시간 35분 후",
+    tagline: "6개국 공장 직거래 소싱 매트릭스 • 캄보디아 B2B 도매 최저가",
+    vipDesk: "VIP 텔레그램 대량 구매 데스크",
+    logisticsBadge: "공식 물류: VET Express • J&T • ZTO",
+    selectTier: "구매 수량 단계 선택:",
+    retailSample: "1개 (샘플 테스트용)",
+    retailSub: "소매 구매자 / 품질 검수용",
+    resellerSub: "소매점 및 부티크 리셀러용",
+    cartonSub: "대형 도매상 전용 마스터 카톤",
+    fastPassTitle: "⚡ 패스트패스 우선 통관 서비스",
+    fastPassSub: "VET Express • J&T • ZTO 신속 국경 운송",
+    selectedOrder: "선택 주문:",
+    logisticsFee: "국경 물류 및 통관 수수료:",
+    escrowBadge: "바콩(Bakong) KHQR 안전 결제 에스크로:",
+    escrowFree: "무료 (프로모션)",
+    marginSaved: "절감된 도매 마진:",
+    totalDue: "최종 결제 금액:",
+    payKhqr: "바콩 KHQR 에스크로 안전 결제",
+    escrowPromise: "🔒 100% 에스크로 보호. 물류사 배송 바코드 스캔 완료 후에만 공급처에 정산됩니다.",
+    scanHelp: "ABA Mobile, Wing, TrueMoney, ACLEDA 앱으로 스캔",
+    simulatePay: "⚡ 모바일 뱅킹 결제 시뮬레이션",
+    paymentLocked: "에스크로 안전 계좌에 입금 완료!",
+    paymentSuccessDesc: "우선 배송 스케줄이 정상 배정되었습니다.",
+    carrierLabel: "운송업체:",
+    trackingLabel: "운송장 번호:",
+    statusLabel: "통관 상태:",
+    statusApproved: "세관 적하목록 승인 완료",
+    doneBtn: "완료 및 마켓으로 복귀",
+    navMarket: "도매 마켓",
+    navFeed: "틱톡 피드",
+    navStudio: "AI 비디오 스튜디오",
+    navWallet: "에스크로 지갑",
+    claimedLabel: "84% 소진됨",
+    cartonsLeft: "이 가격대의 마스터 카톤 재고 6박스 남음",
+    viewingNow: "명의 도매상이 확인 중",
+    filterAll: "전체 출하국",
+    batchFloorRate: "공장 직송 출하가",
+    highDemand: "🔥 주문 폭주",
+    tiktokHit: "틱톡 라이브 히트",
+    factoryBottom: "공장도 최저가",
+    retailRate: "소매가",
+  },
+  JA: {
+    liveDesk: "越境ライブ取引デスク:",
+    activeMerchants: "オリンピック＆オルセー市場 2,480の卸売業者が閲覧中",
+    borderPassOpen: "国境優先通関: 稼働中",
+    nextShuttle: "次回輸送便: 2時間35分後",
+    tagline: "6カ国工場直結ソーシング • カンボジア市場向け卸値マトリクス",
+    vipDesk: "VIP Telegram 大口発注デスク",
+    logisticsBadge: "提携物流: VET Express • J&T • ZTO",
+    selectTier: "発注ロットを選択:",
+    retailSample: "1点 (検品・サンプル用)",
+    retailSub: "小売購入 / サンプル評価",
+    resellerSub: "ショップ・ブティック向け卸売",
+    cartonSub: "大型卸売マスターカートン",
+    fastPassTitle: "⚡ 国境優先通関ファストパス",
+    fastPassSub: "VET Express • J&T • ZTO 24時間越境便",
+    selectedOrder: "選択された注文:",
+    logisticsFee: "国境物流および通関費用:",
+    escrowBadge: "Bakong KHQR エスクロー保護:",
+    escrowFree: "無料 (キャンペーン中)",
+    marginSaved: "削減された卸売マージン:",
+    totalDue: "お支払い合計金額:",
+    payKhqr: "Bakong KHQR エスクローで支払う",
+    escrowPromise: "🔒 100% 資金保護。物流スキャン完了後にのみサプライヤーに送金されます。",
+    scanHelp: "ABA Mobile、Wing、TrueMoney、ACLEDAでスキャン",
+    simulatePay: "⚡ 銀行アプリでの決済シミュレーション",
+    paymentLocked: "エスクロー口座に資金が保護されました！",
+    paymentSuccessDesc: "優先配送スケジュールが登録されました。",
+    carrierLabel: "配送業者:",
+    trackingLabel: "追跡コード:",
+    statusLabel: "配送ステータス:",
+    statusApproved: "税関マニフェスト承認済み",
+    doneBtn: "完了してマーケットへ戻る",
+    navMarket: "卸売市場",
+    navFeed: "TikTok動画",
+    navStudio: "AI制作スタジオ",
+    navWallet: "エスクロー財布",
+    claimedLabel: "84% 予約済み",
+    cartonsLeft: "この価格枠の在庫は残りわずか 6 カートン",
+    viewingNow: "店舗が現在閲覧中",
+    filterAll: "全出荷拠点",
+    batchFloorRate: "工場直送底値",
+    highDemand: "🔥 注文集中",
+    tiktokHit: "TIKTOK話題商品",
+    factoryBottom: "工場最安値",
+    retailRate: "小売価格",
+  },
+};
+
+export interface BulkPricingTier {
+  tierName: string;
+  moq: number;
+  unitPrice: number;
+  badge: string;
+}
+
+export interface ProductItem {
+  id: string;
+  title: string;
+  category:
+    | "Auto Parts"
+    | "Beauty & Personal Care"
+    | "Electronics & Tech"
+    | "Fashion & Footwear"
+    | "Machinery & Tools"
+    | "Salon & Spa"
+    | "Packaging & Supplies"
+    | "Wellness & Vitality"
+    | "Smart Home & Decor"
+    | "Kitchen & Snacks";
+  country: "TH" | "CN" | "VN" | "KR" | "JP" | "KH";
+  countryName: string;
+  flag: string;
+  supplierCity: string;
+  logisticsPartner: "VET Express" | "J&T Express" | "ZTO Express" | "Air Cargo";
+  logisticsRoute: string;
+  imageUrl: string;
+  stockLeft: number;
+  isLiveTikTok: boolean;
+  retailPrice: number;
+  resellerTier: BulkPricingTier;
+  cartonTier: BulkPricingTier;
+}
+
+const ALL_MASTER_PRODUCTS: ProductItem[] = [
+  // 1. JAPAN (JP)
+  {
+    id: "prod-jp-horology-01",
+    title: "Osaka Precision Automatic Sapphire Skeleton Chronograph (Export Lot)",
+    category: "Fashion & Footwear",
+    country: "JP",
+    countryName: "Japan",
+    flag: "🇯🇵",
+    supplierCity: "Osaka Precision Horology Bay",
+    logisticsPartner: "Air Cargo",
+    logisticsRoute: "Kansai Airport ➔ Phnom Penh Cargo Bay (24-48h)",
+    imageUrl: "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&q=80",
+    stockLeft: 850,
+    isLiveTikTok: false,
+    retailPrice: 42.0,
+    resellerTier: { tierName: "Duo Starter", moq: 2, unitPrice: 32.0, badge: "Japan JCCI Certified" },
+    cartonTier: { tierName: "Boutique Carton", moq: 10, unitPrice: 26.5, badge: "Osaka Factory Floor" },
+  },
+  {
+    id: "prod-jp-console-02",
+    title: "Tokyo Retro 15,000-Game Linux Handheld IPS Emulation Console",
+    category: "Electronics & Tech",
+    country: "JP",
+    countryName: "Japan",
+    flag: "🇯🇵",
+    supplierCity: "Tokyo Akihabara Depot",
+    logisticsPartner: "Air Cargo",
+    logisticsRoute: "Haneda Airport ➔ Phnom Penh International Airport",
+    imageUrl: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600&q=80",
+    stockLeft: 1200,
+    isLiveTikTok: true,
+    retailPrice: 35.0,
+    resellerTier: { tierName: "Sample Batch", moq: 3, unitPrice: 24.5, badge: "TikTok Gaming Viral" },
+    cartonTier: { tierName: "Shop Display Carton", moq: 10, unitPrice: 20.5, badge: "Tokyo Direct" },
+  },
+  {
+    id: "prod-jp-pump-03",
+    title: "Heavy-Duty 3-Inch High-Pressure Gasoline Engine Water Pump (7.5HP)",
+    category: "Machinery & Tools",
+    country: "JP",
+    countryName: "Japan",
+    flag: "🇯🇵",
+    supplierCity: "Osaka Precision Machinery",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "Tokyo Sea Container Consolidation via ZTO",
+    imageUrl: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=600&q=80",
+    stockLeft: 95,
+    isLiveTikTok: false,
+    retailPrice: 165.0,
+    resellerTier: { tierName: "Hardware Shop Pack", moq: 2, unitPrice: 120.0, badge: "Agri Province Demand" },
+    cartonTier: { tierName: "Distributor Pallet", moq: 10, unitPrice: 95.0, badge: "Heavy Machinery Rate" },
+  },
+  {
+    id: "prod-jp-drill-04",
+    title: "18V Cordless Brushless Impact Drill Set with Dual Battery",
+    category: "Machinery & Tools",
+    country: "JP",
+    countryName: "Japan",
+    flag: "🇯🇵",
+    supplierCity: "Osaka Precision Machinery",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "Tokyo Sea Container Consolidation via ZTO",
+    imageUrl: "https://images.unsplash.com/photo-1504148455328-c376907d081c?w=600&q=80",
+    stockLeft: 180,
+    isLiveTikTok: false,
+    retailPrice: 65.0,
+    resellerTier: { tierName: "Workshop Bundle", moq: 3, unitPrice: 42.0, badge: "Contractor Rate" },
+    cartonTier: { tierName: "Distributor Pallet", moq: 20, unitPrice: 32.5, badge: "Heavy Equipment Rate" },
+  },
+
+  // 2. SOUTH KOREA (KR)
+  {
+    id: "prod-kr-skincare-01",
+    title: "Seoul K-Beauty Niacinamide 10% + Zinc Glass Skin Radiance Serum (50ml)",
+    category: "Beauty & Personal Care",
+    country: "KR",
+    countryName: "South Korea",
+    flag: "🇰🇷",
+    supplierCity: "Incheon IFEZ Logistics Center",
+    logisticsPartner: "Air Cargo",
+    logisticsRoute: "Incheon Airport ➔ Phnom Penh Airport Direct (24h)",
+    imageUrl: "https://images.unsplash.com/photo-1608248597359-bb51375d86ef?w=600&q=80",
+    stockLeft: 5200,
+    isLiveTikTok: true,
+    retailPrice: 8.5,
+    resellerTier: { tierName: "Salon Pack", moq: 6, unitPrice: 4.8, badge: "Korea MFDS / MOH Cleared" },
+    cartonTier: { tierName: "Master Carton", moq: 24, unitPrice: 3.7, badge: "Direct Seoul Export" },
+  },
+  {
+    id: "prod-kr-sunscreen-02",
+    title: "Gangnam Centella Cica Soothing Matte Barrier Sunscreen SPF50+",
+    category: "Beauty & Personal Care",
+    country: "KR",
+    countryName: "South Korea",
+    flag: "🇰🇷",
+    supplierCity: "Seoul Gangnam Beauty Hub",
+    logisticsPartner: "Air Cargo",
+    logisticsRoute: "Incheon to Phnom Penh VIP Express Air Cargo",
+    imageUrl: "https://images.unsplash.com/photo-1556228720-195a672e8a03?w=600&q=80",
+    stockLeft: 3400,
+    isLiveTikTok: true,
+    retailPrice: 7.5,
+    resellerTier: { tierName: "Starter Restock", moq: 10, unitPrice: 3.9, badge: "TikTok Viral #1 Sunscreen" },
+    cartonTier: { tierName: "Wholesale Master Case", moq: 50, unitPrice: 3.1, badge: "Seoul Floor Rate" },
+  },
+  {
+    id: "prod-kr-pufferbag-03",
+    title: "Korean Aesthetic Quilted Puffer Cloud Dumpling Shoulder Bag",
+    category: "Fashion & Footwear",
+    country: "KR",
+    countryName: "South Korea",
+    flag: "🇰🇷",
+    supplierCity: "Seoul Dongdaemun Fashion Hub",
+    logisticsPartner: "Air Cargo",
+    logisticsRoute: "Incheon to Phnom Penh VIP Air Cargo",
+    imageUrl: "https://images.unsplash.com/photo-1591561954557-26941169b49e?w=600&q=80",
+    stockLeft: 890,
+    isLiveTikTok: true,
+    retailPrice: 16.0,
+    resellerTier: { tierName: "Boutique Pack", moq: 8, unitPrice: 7.2, badge: "TikTok It-Bag" },
+    cartonTier: { tierName: "Master Bale", moq: 80, unitPrice: 4.6, badge: "Seoul Wholesale" },
+  },
+
+  // 3. THAILAND (TH)
+  {
+    id: "prod-th-shoes-01",
+    title: "Bangkok Air-Cushion Breathable High-Bounce Running Sneakers",
+    category: "Fashion & Footwear",
+    country: "TH",
+    countryName: "Thailand",
+    flag: "🇹🇭",
+    supplierCity: "Ladkrabang Industrial Zone, Bangkok",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "Bangkok ➔ Poipet Gate ➔ Phnom Penh (Hwy 5)",
+    imageUrl: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
+    stockLeft: 3400,
+    isLiveTikTok: true,
+    retailPrice: 20.0,
+    resellerTier: { tierName: "Sample Batch", moq: 3, unitPrice: 13.5, badge: "TikTok Viral Footwear" },
+    cartonTier: { tierName: "Container Bale", moq: 50, unitPrice: 9.5, badge: "Form D ASEAN Exempt" },
+  },
+  {
+    id: "prod-th-silk-02",
+    title: "Ladkrabang Heavyweight Silk-Poly Utility Cargo Overshirt",
+    category: "Fashion & Footwear",
+    country: "TH",
+    countryName: "Thailand",
+    flag: "🇹🇭",
+    supplierCity: "Bangkok Cargo Terminal (Ladkrabang)",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "Bangkok ➔ Poipet Gate ➔ Phnom Penh Night Markets",
+    imageUrl: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=600&q=80",
+    stockLeft: 2450,
+    isLiveTikTok: false,
+    retailPrice: 18.0,
+    resellerTier: { tierName: "Sample Batch", moq: 3, unitPrice: 12.5, badge: "Double Stitch Weave" },
+    cartonTier: { tierName: "Container Bale", moq: 50, unitPrice: 9.5, badge: "Direct Cargo" },
+  },
+  {
+    id: "prod-th-perfume-03",
+    title: "Deep Ocean & Woody Men's Long-Lasting Eau De Parfum (100ml)",
+    category: "Beauty & Personal Care",
+    country: "TH",
+    countryName: "Thailand",
+    flag: "🇹🇭",
+    supplierCity: "Bangkok Fragrance Lab",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "VET Express 24h Poipet Border Express",
+    imageUrl: "https://images.unsplash.com/photo-1523293182086-7651a899d37f?w=600&q=80",
+    stockLeft: 640,
+    isLiveTikTok: true,
+    retailPrice: 16.0,
+    resellerTier: { tierName: "Boutique Pack", moq: 6, unitPrice: 7.5, badge: "Save $8.50/pc" },
+    cartonTier: { tierName: "Master Carton", moq: 60, unitPrice: 4.8, badge: "Wholesale Margin" },
+  },
+  {
+    id: "prod-th-balm-04",
+    title: "Hong Thai Traditional Thai Herbal Aroma Inhaler & Siang Pure Balm Set",
+    category: "Beauty & Personal Care",
+    country: "TH",
+    countryName: "Thailand",
+    flag: "🇹🇭",
+    supplierCity: "Bangkok Traditional Medicine Lab",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "VET Express 24h Poipet Border Shuttle",
+    imageUrl: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&q=80",
+    stockLeft: 2200,
+    isLiveTikTok: true,
+    retailPrice: 5.0,
+    resellerTier: { tierName: "Pharmacy Display Box", moq: 24, unitPrice: 1.8, badge: "Household Must-Have" },
+    cartonTier: { tierName: "Master Wholesale Crate", moq: 240, unitPrice: 1.15, badge: "Border Floor Rate" },
+  },
+  {
+    id: "prod-th-05",
+    title: "Honda Dream 125 / Scoopy CNC Nitrogen Shock Absorber Pair",
+    category: "Auto Parts",
+    country: "TH",
+    countryName: "Thailand",
+    flag: "🇹🇭",
+    supplierCity: "Bangkok Moto Hub",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "VET Express 24h Poipet Border Shuttle",
+    imageUrl: "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=600&q=80",
+    stockLeft: 420,
+    isLiveTikTok: true,
+    retailPrice: 24.0,
+    resellerTier: { tierName: "Shop Pack", moq: 3, unitPrice: 11.5, badge: "Save $12.50/pc" },
+    cartonTier: { tierName: "Master Carton", moq: 30, unitPrice: 8.5, badge: "Factory Floor Rate" },
+  },
+
+  // 4. CHINA (CN)
+  {
+    id: "prod-cn-powerbank-01",
+    title: "10,000mAh Cyberpunk Transparent Wireless MagSafe Power Bank",
+    category: "Electronics & Tech",
+    country: "CN",
+    countryName: "China",
+    flag: "🇨🇳",
+    supplierCity: "Shenzhen Baoan Electronics Bay",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "Shenzhen ➔ Poipet Duty Free Bay ➔ Phnom Penh",
+    imageUrl: "https://images.unsplash.com/photo-1622445262464-84b1456045b6?w=600&q=80",
+    stockLeft: 4200,
+    isLiveTikTok: true,
+    retailPrice: 19.5,
+    resellerTier: { tierName: "Sample Pack", moq: 4, unitPrice: 11.8, badge: "TikTok Gadget #1" },
+    cartonTier: { tierName: "Store Carton", moq: 20, unitPrice: 9.9, badge: "CE / RoHS Certified" },
+  },
+  {
+    id: "prod-cn-gan-02",
+    title: "65W Dual USB-C GaN Superfast Universal Travel Adapters",
+    category: "Electronics & Tech",
+    country: "CN",
+    countryName: "China",
+    flag: "🇨🇳",
+    supplierCity: "Poipet SEZ Assembly Hub",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "Poipet SEZ Gate ➔ Battambang ➔ Phnom Penh",
+    imageUrl: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&q=80",
+    stockLeft: 1180,
+    isLiveTikTok: false,
+    retailPrice: 14.0,
+    resellerTier: { tierName: "Retail Starter", moq: 3, unitPrice: 8.0, badge: "GaN III Technology" },
+    cartonTier: { tierName: "Distributor Carton", moq: 50, unitPrice: 5.5, badge: "Direct Factory" },
+  },
+  {
+    id: "prod-cn-earbuds-03",
+    title: "Transparent Cyberpunk TWS Wireless Gaming Earbuds with LED Display",
+    category: "Electronics & Tech",
+    country: "CN",
+    countryName: "China",
+    flag: "🇨🇳",
+    supplierCity: "Shenzhen Huaqiangbei Audio Hub",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "ZTO Priority Air Freight (3 Days)",
+    imageUrl: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=600&q=80",
+    stockLeft: 1850,
+    isLiveTikTok: true,
+    retailPrice: 12.0,
+    resellerTier: { tierName: "Reseller Box", moq: 10, unitPrice: 4.8, badge: "TikTok #1 Audio Hit" },
+    cartonTier: { tierName: "Master Carton", moq: 100, unitPrice: 2.95, badge: "Shenzhen Floor Rate" },
+  },
+  {
+    id: "prod-cn-smartwatch-04",
+    title: "Ultra Smart Watch Series 9 Clone (AMOLED, Wireless Fast Charge)",
+    category: "Electronics & Tech",
+    country: "CN",
+    countryName: "China",
+    flag: "🇨🇳",
+    supplierCity: "Shenzhen Smart Wearable Zone",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "ZTO Air Express to Phnom Penh",
+    imageUrl: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=600&q=80",
+    stockLeft: 740,
+    isLiveTikTok: true,
+    retailPrice: 22.0,
+    resellerTier: { tierName: "Store Retail Pack", moq: 6, unitPrice: 10.5, badge: "Save $11.50/pc" },
+    cartonTier: { tierName: "Master Crate", moq: 50, unitPrice: 6.8, badge: "Direct Factory Cut" },
+  },
+  {
+    id: "prod-cn-gimbal-05",
+    title: "AI 360° Auto Face-Tracking Smart Phone Gimbal Stand",
+    category: "Electronics & Tech",
+    country: "CN",
+    countryName: "China",
+    flag: "🇨🇳",
+    supplierCity: "Shenzhen Creator Tech",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "ZTO Express Priority Air Freight",
+    imageUrl: "https://images.unsplash.com/photo-1589492477829-5e65395b66cc?w=600&q=80",
+    stockLeft: 620,
+    isLiveTikTok: true,
+    retailPrice: 18.5,
+    resellerTier: { tierName: "Streamer Pack", moq: 6, unitPrice: 9.2, badge: "Live Creator Viral" },
+    cartonTier: { tierName: "Master Box", moq: 48, unitPrice: 6.4, badge: "Wholesale Margin" },
+  },
+  {
+    id: "prod-cn-hotpot-06",
+    title: "2-in-1 Electric Shabu Hotpot & Teppanyaki Smokeless BBQ Grill",
+    category: "Kitchen & Snacks",
+    country: "CN",
+    countryName: "China",
+    flag: "🇨🇳",
+    supplierCity: "Zhongshan Kitchen Appliance Hub",
+    logisticsPartner: "ZTO Express",
+    logisticsRoute: "ZTO Sea Freight Consolidation (Sihanoukville)",
+    imageUrl: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80",
+    stockLeft: 460,
+    isLiveTikTok: true,
+    retailPrice: 22.0,
+    resellerTier: { tierName: "Kitchen Store Pack", moq: 4, unitPrice: 13.5, badge: "TikTok Live Hit" },
+    cartonTier: { tierName: "Master Carton", moq: 30, unitPrice: 9.8, badge: "Direct Factory Cut" },
+  },
+
+  // 5. VIETNAM (VN)
+  {
+    id: "prod-vn-leather-01",
+    title: "Bavet Border Full-Grain Cowhide Vintage Leather Duffle Bag",
+    category: "Fashion & Footwear",
+    country: "VN",
+    countryName: "Vietnam",
+    flag: "🇻🇳",
+    supplierCity: "Bavet Dry Port Gate, Svay Rieng",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "Bavet Border Gate ➔ Svay Rieng ➔ Phnom Penh (Hwy 1)",
+    imageUrl: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80",
+    stockLeft: 780,
+    isLiveTikTok: false,
+    retailPrice: 35.0,
+    resellerTier: { tierName: "Duo Pack", moq: 2, unitPrice: 22.0, badge: "Full ASEAN Duty Paid" },
+    cartonTier: { tierName: "Retail Lot", moq: 6, unitPrice: 19.5, badge: "Bavet Border Floor" },
+  },
+  {
+    id: "prod-vn-sports-02",
+    title: "Men's & Women's Quick-Dry Breathable Athletic Sportswear Set",
+    category: "Fashion & Footwear",
+    country: "VN",
+    countryName: "Vietnam",
+    flag: "🇻🇳",
+    supplierCity: "Ho Chi Minh Garment Zone",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "VET Express 18h Bavet Land Border Fast-Pass",
+    imageUrl: "https://images.unsplash.com/photo-1517838277536-f5f99be501cd?w=600&q=80",
+    stockLeft: 940,
+    isLiveTikTok: true,
+    retailPrice: 15.0,
+    resellerTier: { tierName: "Gym Pack", moq: 8, unitPrice: 7.2, badge: "Popular Reseller Pick" },
+    cartonTier: { tierName: "Wholesale Crate", moq: 80, unitPrice: 4.9, badge: "Bavet Factory Margin" },
+  },
+  {
+    id: "prod-vn-shapewear-03",
+    title: "Seamless Ultra High-Waist Tummy Control Bodysuit & Body Shaper",
+    category: "Fashion & Footwear",
+    country: "VN",
+    countryName: "Vietnam",
+    flag: "🇻🇳",
+    supplierCity: "Ho Chi Minh Textile District",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "VET Express 18h Bavet Fast-Pass",
+    imageUrl: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80",
+    stockLeft: 1250,
+    isLiveTikTok: true,
+    retailPrice: 12.5,
+    resellerTier: { tierName: "Lingerie Store Pack", moq: 10, unitPrice: 5.5, badge: "Live Stream #1 Volume" },
+    cartonTier: { tierName: "Factory Master Box", moq: 100, unitPrice: 3.4, badge: "Direct Bavet Price" },
+  },
+  {
+    id: "prod-vn-packaging-04",
+    title: "Heavy-Duty Waterproof Poly-Mailer Packaging Bags (Pack of 100)",
+    category: "Packaging & Supplies",
+    country: "VN",
+    countryName: "Vietnam",
+    flag: "🇻🇳",
+    supplierCity: "Ho Chi Minh Packaging Zone",
+    logisticsPartner: "VET Express",
+    logisticsRoute: "VET Express 18h Bavet Fast-Pass",
+    imageUrl: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=600&q=80",
+    stockLeft: 2200,
+    isLiveTikTok: false,
+    retailPrice: 6.0,
+    resellerTier: { tierName: "Seller Pack (500 pcs)", moq: 5, unitPrice: 3.8, badge: "Online Shop Must-Have" },
+    cartonTier: { tierName: "Warehouse Bulk", moq: 50, unitPrice: 2.6, badge: "Wholesale Packaging Rate" },
+  },
+
+  // 6. CAMBODIA (KH)
+  {
+    id: "prod-kh-boots-01",
+    title: "Waterproof Tactical All-Terrain Combat High-Top Boots",
+    category: "Fashion & Footwear",
+    country: "KH",
+    countryName: "Cambodia",
+    flag: "🇰🇭",
+    supplierCity: "Phnom Penh SEZ Industrial Park",
+    logisticsPartner: "J&T Express",
+    logisticsRoute: "Phnom Penh Hub ➔ Nationwide Provincial Dispatch (24h)",
+    imageUrl: "https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=600&q=80",
+    stockLeft: 2800,
+    isLiveTikTok: false,
+    retailPrice: 26.0,
+    resellerTier: { tierName: "Sample Batch", moq: 3, unitPrice: 16.5, badge: "Domestic Tax Paid" },
+    cartonTier: { tierName: "Shop Restock", moq: 10, unitPrice: 14.0, badge: "24h Local Dispatch" },
+  },
+  {
+    id: "prod-kh-canvas-02",
+    title: "Streetwear Low-Top Vulcanized Canvas Sneakers (Night Market Lot)",
+    category: "Fashion & Footwear",
+    country: "KH",
+    countryName: "Cambodia",
+    flag: "🇰🇭",
+    supplierCity: "Kompong Cham Footwear Bay",
+    logisticsPartner: "J&T Express",
+    logisticsRoute: "Kompong Cham ➔ National Hwy 6 ➔ Phnom Penh",
+    imageUrl: "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80",
+    stockLeft: 4200,
+    isLiveTikTok: true,
+    retailPrice: 18.0,
+    resellerTier: { tierName: "Sample Batch", moq: 3, unitPrice: 11.5, badge: "Vulcanized Sole" },
+    cartonTier: { tierName: "Wholesale Bale", moq: 50, unitPrice: 8.2, badge: "Night Market Best Seller" },
+  },
+  {
+    id: "prod-kh-silk-03",
+    title: "Handcrafted Traditional Cambodian Golden Silk Scarf & Premium Krama",
+    category: "Fashion & Footwear",
+    country: "KH",
+    countryName: "Cambodia",
+    flag: "🇰🇭",
+    supplierCity: "Phnom Penh Artisan Guild",
+    logisticsPartner: "J&T Express",
+    logisticsRoute: "J&T Express 2h Instant Dispatch across Phnom Penh",
+    imageUrl: "https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=600&q=80",
+    stockLeft: 290,
+    isLiveTikTok: false,
+    retailPrice: 18.0,
+    resellerTier: { tierName: "Souvenir Pack", moq: 5, unitPrice: 10.5, badge: "Artisan Heritage" },
+    cartonTier: { tierName: "Export Box", moq: 30, unitPrice: 7.2, badge: "Wholesale Stock" },
+  },
+  {
+    id: "prod-kh-pepper-04",
+    title: "Premium Grade Kampot Whole Black Pepper (500g Vacuum Pouch)",
+    category: "Kitchen & Snacks",
+    country: "KH",
+    countryName: "Cambodia",
+    flag: "🇰🇭",
+    supplierCity: "Phnom Penh Central Hub",
+    logisticsPartner: "J&T Express",
+    logisticsRoute: "J&T Express Door-to-Door 25 Provinces Delivery",
+    imageUrl: "https://images.unsplash.com/photo-1599940824399-b87987ceb72a?w=600&q=80",
+    stockLeft: 1500,
+    isLiveTikTok: false,
+    retailPrice: 8.5,
+    resellerTier: { tierName: "Local Grocery Pack", moq: 10, unitPrice: 5.5, badge: "Ready Stock" },
+    cartonTier: { tierName: "Wholesale Sacks", moq: 50, unitPrice: 4.1, badge: "Direct Farm Price" },
+  },
+  {
+    id: "prod-kh-snack-05",
+    title: "Authentic Cambodian Sun-Dried Beef with Sesame & Dried Fish Crate",
+    category: "Kitchen & Snacks",
+    country: "KH",
+    countryName: "Cambodia",
+    flag: "🇰🇭",
+    supplierCity: "Siem Reap / Battambang Hub",
+    logisticsPartner: "J&T Express",
+    logisticsRoute: "J&T Express 2h Instant Dispatch across Phnom Penh",
+    imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=600&q=80",
+    stockLeft: 620,
+    isLiveTikTok: true,
+    retailPrice: 12.0,
+    resellerTier: { tierName: "Local Deli Pack", moq: 6, unitPrice: 7.5, badge: "Province Favorite" },
+    cartonTier: { tierName: "Wholesale Master Bale", moq: 40, unitPrice: 5.4, badge: "Direct Origin Price" },
+  },
+];
+
+const COUNTRIES_BAR = [
+  { code: "ALL", labelKey: "filterAll", flag: "🌐" },
+  { code: "TH", label: "Thailand", flag: "🇹🇭" },
+  { code: "CN", label: "China", flag: "🇨🇳" },
+  { code: "VN", label: "Vietnam", flag: "🇻🇳" },
+  { code: "KR", label: "South Korea", flag: "🇰🇷" },
+  { code: "JP", label: "Japan", flag: "🇯🇵" },
+  { code: "KH", label: "Cambodia Hub", flag: "🇰🇭" },
+] as const;
+
+const AVAILABLE_LANGUAGES: { code: LanguageCode; label: string; flag: string }[] = [
+  { code: "KM", label: "ភាសាខ្មែរ (Khmer)", flag: "🇰🇭" },
+  { code: "EN", label: "English (EN)", flag: "🇬🇧" },
+  { code: "ZH", label: "中文 (Chinese)", flag: "🇨🇳" },
+  { code: "TH", label: "ไทย (Thai)", flag: "🇹🇭" },
+  { code: "VI", label: "Tiếng Việt (Viet)", flag: "🇻🇳" },
+  { code: "KO", label: "한국어 (Korean)", flag: "🇰🇷" },
+  { code: "JA", label: "日本語 (Japanese)", flag: "🇯🇵" },
+];
+
+const RECENT_LIVE_PURCHASES = [
+  { buyer: "Bopha S.", market: "Olympic Market, Phnom Penh", item: "Osaka Chronograph Watches", qty: "10 Pcs Carton", time: "just now" },
+  { buyer: "Sokha Chen", market: "Orussey Market Hub", item: "Bangkok Air-Cushion Sneakers", qty: "50 Pairs Master Bale", time: "18s ago" },
+  { buyer: "Meng V.", market: "Battambang Central Store", item: "2-in-1 Shabu Hotpot Grills", qty: "10 Pcs Pack", time: "42s ago" },
+  { buyer: "Dany K.", market: "Tuol Kork Boutique", item: "Korean Puffer Cloud Bags", qty: "80 Pcs Master Bale", time: "1m ago" },
+  { buyer: "Chanthy L.", market: "Siem Reap Night Market", item: "Cyberpunk TWS Earbuds", qty: "100 Pcs Master Crate", time: "2m ago" },
+];
+
+export default function MarketplacePage() {
+  const [currentLang, setCurrentLang] = useState<LanguageCode>("KM");
+  const [selectedCountry, setSelectedCountry] = useState<string>("ALL");
+  const [activeProduct, setActiveProduct] = useState<ProductItem>(ALL_MASTER_PRODUCTS[0]);
+  const [selectedTier, setSelectedTier] = useState<"retail" | "reseller" | "carton">("reseller");
+  const [expressPass, setExpressPass] = useState(true);
+  const [showKhqrModal, setShowKhqrModal] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<"IDLE" | "SUCCESS">("IDLE");
+
+  const [activeViewers, setActiveViewers] = useState(38);
+  const [timeLeft, setTimeLeft] = useState({ minutes: 14, seconds: 28 });
+  const [recentToastIndex, setRecentToastIndex] = useState(0);
+
+  const t = UI_TRANSLATIONS[currentLang] || UI_TRANSLATIONS.EN;
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0) return { minutes: prev.minutes - 1, seconds: 59 };
+        return { minutes: 14, seconds: 59 };
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRecentToastIndex((prev) => (prev + 1) % RECENT_LIVE_PURCHASES.length);
+      setActiveViewers((prev) => Math.floor(Math.random() * 15) + 32);
+    }, 6500);
+    return () => clearInterval(interval);
+  }, []);
+
+  const filteredProducts =
+    selectedCountry === "ALL"
+      ? ALL_MASTER_PRODUCTS
+      : ALL_MASTER_PRODUCTS.filter((p) => p.country === selectedCountry);
+
+  const getPricingInfo = () => {
+    if (selectedTier === "retail") {
+      return { qty: 1, unitPrice: activeProduct.retailPrice, label: t.retailSample };
+    }
+    if (selectedTier === "reseller") {
+      return {
+        qty: activeProduct.resellerTier.moq,
+        unitPrice: activeProduct.resellerTier.unitPrice,
+        label: `${activeProduct.resellerTier.moq} Pcs (${activeProduct.resellerTier.tierName})`,
+      };
+    }
+    return {
+      qty: activeProduct.cartonTier.moq,
+      unitPrice: activeProduct.cartonTier.unitPrice,
+      label: `${activeProduct.cartonTier.moq} Pcs (${activeProduct.cartonTier.tierName})`,
+    };
+  };
+
+  const currentOrder = getPricingInfo();
+  const subtotal = currentOrder.qty * currentOrder.unitPrice;
+  const speedPassFee = expressPass ? 0.4 : 0.0;
+  const totalAmount = subtotal + speedPassFee;
+  const sampleComparisonTotal = currentOrder.qty * activeProduct.retailPrice;
+  const totalSaved = sampleComparisonTotal - subtotal;
+
+  const getTrackingDetails = () => {
+    const randomCode = Math.floor(100000 + Math.random() * 900000);
+    if (activeProduct.logisticsPartner === "ZTO Express" || activeProduct.country === "CN") {
+      return { code: `ZTO-KH-${randomCode}`, carrier: "ZTO Express Air/Sea Cargo" };
+    }
+    if (activeProduct.logisticsPartner === "J&T Express" || activeProduct.country === "KH") {
+      return { code: `JT-KH-${randomCode}`, carrier: "J&T Express Door-to-Door" };
+    }
+    return { code: `VET-KH-${randomCode}`, carrier: "VET Express Border Shuttle" };
+  };
+
+  const trackingInfo = getTrackingDetails();
+  const currentToast = RECENT_LIVE_PURCHASES[recentToastIndex];
+
+  return (
+    <main className="min-h-screen bg-neutral-950 text-neutral-100 p-3 sm:p-6 pb-28 antialiased font-sans relative select-none">
+      {/* 🔴 LIVE PSYCHOLOGY: Top Ticker */}
+      <div className="max-w-7xl mx-auto mb-4 bg-gradient-to-r from-red-950/80 via-neutral-900 to-red-950/80 border border-red-500/30 rounded-2xl px-4 py-2 flex flex-wrap items-center justify-between text-xs gap-2 shadow-lg shadow-red-950/20">
+        <div className="flex items-center gap-2">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+          </span>
+          <span className="font-black text-red-400 uppercase tracking-wide">{t.liveDesk}</span>
+          <span className="text-neutral-200 font-semibold">{t.activeMerchants}</span>
+        </div>
+        <div className="flex items-center gap-3 text-neutral-400">
+          <span>⚡ {t.borderPassOpen}</span>
+          <span className="hidden sm:inline">•</span>
+          <span className="hidden sm:inline">{t.nextShuttle}</span>
+        </div>
+      </div>
+
+      {/* Top Header with Multi-Language Switcher */}
+      <header className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-neutral-800 pb-5 mb-6">
+        <div>
+          <div className="flex items-center gap-2">
+            <Link
+              href="/"
+              className="w-8 h-8 rounded-full bg-neutral-900 border border-neutral-700 flex items-center justify-center text-white text-base font-bold active:scale-90 transition-transform shrink-0"
+              aria-label="Back to Home"
+            >
+              ←
+            </Link>
+            <h1 className="text-xl sm:text-3xl font-black tracking-tight text-white">
+              BARAKA <span className="text-red-500">WHOLESALE</span>
+            </h1>
+            <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
+              Bakong Universal KHQR Escrow
+            </span>
+          </div>
+          <p className="text-xs sm:text-sm text-neutral-400 mt-1">{t.tagline}</p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {/* 🌐 7-Language Switcher Dropdown */}
+          <div className="relative flex items-center bg-neutral-900 border border-neutral-700 rounded-xl px-2.5 py-1.5 shadow-md">
+            <span className="text-sm mr-1.5">🌐</span>
+            <select
+              value={currentLang}
+              onChange={(e) => setCurrentLang(e.target.value as LanguageCode)}
+              aria-label="Select Language"
+              className="bg-transparent text-xs font-bold text-white focus:outline-none cursor-pointer pr-1"
+            >
+              {AVAILABLE_LANGUAGES.map((lang) => (
+                <option key={lang.code} value={lang.code} className="bg-neutral-900 text-neutral-100">
+                  {lang.flag} {lang.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <a
+            href="https://t.me/"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-sky-500/10 border border-sky-500/30 text-sky-400 text-xs font-semibold hover:bg-sky-500/20 transition-all"
+          >
+            <span>💬</span> {t.vipDesk}
+          </a>
+          <div className="px-3 py-2 rounded-xl bg-neutral-900 border border-neutral-800 text-xs text-neutral-300">
+            🚚 {t.logisticsBadge}
+          </div>
+        </div>
+      </header>
+
+      {/* 6 Country Filter Bar */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+          {COUNTRIES_BAR.map((c) => (
+            <button
+              key={c.code}
+              onClick={() => setSelectedCountry(c.code)}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                selectedCountry === c.code
+                  ? "bg-red-600 text-white shadow-lg shadow-red-600/30 border border-red-500"
+                  : "bg-neutral-900 text-neutral-400 border border-neutral-800 hover:border-neutral-700 hover:text-neutral-200"
+              }`}
+            >
+              <span>{c.flag}</span>
+              <span>{c.code === "ALL" ? t.filterAll : c.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid: Catalog (Left) + Checkout Panel (Right) */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Products Grid */}
+        <div className="lg:col-span-8 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {filteredProducts.map((p) => {
+              const isSelected = activeProduct.id === p.id;
+              return (
+                <div
+                  key={p.id}
+                  onClick={() => {
+                    setActiveProduct(p);
+                    setPaymentStatus("IDLE");
+                  }}
+                  className={`cursor-pointer rounded-2xl p-4 transition-all border relative flex flex-col justify-between ${
+                    isSelected
+                      ? "bg-neutral-900 border-red-500 shadow-xl shadow-red-950/40"
+                      : "bg-neutral-900/60 border-neutral-800/80 hover:border-neutral-700"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-neutral-800 border border-neutral-700 text-neutral-300 flex items-center gap-1">
+                        <span>{p.flag}</span> {p.countryName}
+                      </span>
+                      {p.isLiveTikTok && (
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-red-500/20 border border-red-500/40 text-red-400 animate-pulse flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                          {t.tiktokHit}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="relative w-full h-40 rounded-xl overflow-hidden mb-3 bg-neutral-800">
+                      <Image
+                        src={p.imageUrl}
+                        alt={p.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform"
+                        unoptimized
+                      />
+                      <span className="absolute bottom-2 left-2 bg-black/80 backdrop-blur-sm text-[10px] font-bold text-amber-400 px-2 py-0.5 rounded-md border border-amber-500/30">
+                        {t.highDemand}
+                      </span>
+                    </div>
+
+                    <h3 className="text-sm font-bold text-white line-clamp-2 mb-1">{p.title}</h3>
+                    <p className="text-[11px] text-neutral-400 mb-3 flex items-center gap-1">
+                      <span>🚚</span> <span className="font-semibold text-neutral-300">{p.logisticsPartner}:</span> {p.logisticsRoute}
+                    </p>
+                  </div>
+
+                  <div className="bg-neutral-950/80 rounded-xl p-2.5 border border-neutral-800/80 space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-neutral-500">{t.retailSample}:</span>
+                      <span className="font-semibold text-neutral-300">${p.retailPrice.toFixed(2)}/pc</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-amber-400 font-semibold">{p.resellerTier.tierName} ({p.resellerTier.moq}+ pcs):</span>
+                      <span className="font-bold text-amber-300">${p.resellerTier.unitPrice.toFixed(2)}/pc</span>
+                    </div>
+                    <div className="flex items-center justify-between text-xs border-t border-neutral-800/60 pt-1">
+                      <span className="text-emerald-400 font-bold">{t.cartonSub} ({p.cartonTier.moq}+ pcs):</span>
+                      <span className="font-black text-emerald-300">${p.cartonTier.unitPrice.toFixed(2)}/pc</span>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Right Checkout Panel */}
+        <div className="lg:col-span-4">
+          <div className="sticky top-6 bg-neutral-900 border border-neutral-800 rounded-3xl p-5 space-y-5 shadow-2xl">
+            {/* Live Psychology Urgency Banner */}
+            <div className="bg-red-950/30 border border-red-500/30 rounded-2xl p-3 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 text-amber-300 font-bold">
+                  <span>🔥</span> {activeViewers} {t.viewingNow}
+                </span>
+                <span className="font-mono text-xs font-bold text-red-400 bg-red-500/10 px-2 py-0.5 rounded-md border border-red-500/20">
+                  ⏳ {String(timeLeft.minutes).padStart(2, "0")}:{String(timeLeft.seconds).padStart(2, "0")}
+                </span>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between text-[10px] text-neutral-400">
+                  <span>{t.batchFloorRate}</span>
+                  <span className="text-amber-400 font-bold">{t.claimedLabel}</span>
+                </div>
+                <div className="w-full h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                  <div className="h-full bg-gradient-to-r from-amber-500 to-red-500 rounded-full w-[84%]"></div>
+                </div>
+                <p className="text-[10px] text-neutral-500 text-right">{t.cartonsLeft}</p>
+              </div>
+            </div>
+
+            {/* Selected Product Header */}
+            <div className="flex gap-3 items-center border-b border-neutral-800 pb-4">
+              <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-neutral-800 shrink-0">
+                <Image
+                  src={activeProduct.imageUrl}
+                  alt={activeProduct.title}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+              <div>
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-neutral-800 text-neutral-300">
+                  {activeProduct.flag} {activeProduct.supplierCity}
+                </span>
+                <h4 className="text-xs font-bold text-white line-clamp-2 mt-1">{activeProduct.title}</h4>
+              </div>
+            </div>
+
+            <div>
+              <label className="text-xs font-bold text-neutral-300 block mb-2">{t.selectTier}</label>
+              <div className="space-y-2">
+                {/* 1 Pc Sample */}
+                <button
+                  onClick={() => setSelectedTier("retail")}
+                  className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all ${
+                    selectedTier === "retail"
+                      ? "border-neutral-400 bg-neutral-800"
+                      : "border-neutral-800 bg-neutral-950/60 text-neutral-400 hover:border-neutral-700"
+                  }`}
+                >
+                  <div>
+                    <p className="text-xs font-bold text-white">{t.retailSample}</p>
+                    <p className="text-[10px] text-neutral-500">{t.retailSub}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-white">${activeProduct.retailPrice.toFixed(2)}</p>
+                    <span className="text-[9px] text-neutral-500">{t.retailRate}</span>
+                  </div>
+                </button>
+
+                {/* Reseller MOQ */}
+                <button
+                  onClick={() => setSelectedTier("reseller")}
+                  className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all ${
+                    selectedTier === "reseller"
+                      ? "border-amber-500 bg-amber-500/10"
+                      : "border-neutral-800 bg-neutral-950/60 text-neutral-400 hover:border-neutral-700"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold text-amber-300">{activeProduct.resellerTier.tierName}</p>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-bold">
+                        MOQ {activeProduct.resellerTier.moq}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-neutral-400">{t.resellerSub}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-amber-300">${activeProduct.resellerTier.unitPrice.toFixed(2)}/pc</p>
+                    <span className="text-[9px] text-emerald-400 font-semibold">
+                      Save ${(activeProduct.retailPrice - activeProduct.resellerTier.unitPrice).toFixed(2)}/pc
+                    </span>
+                  </div>
+                </button>
+
+                {/* Master Carton Wholesale */}
+                <button
+                  onClick={() => setSelectedTier("carton")}
+                  className={`w-full p-2.5 rounded-xl border text-left flex items-center justify-between transition-all ${
+                    selectedTier === "carton"
+                      ? "border-emerald-500 bg-emerald-500/10 shadow-lg shadow-emerald-950/30"
+                      : "border-neutral-800 bg-neutral-950/60 text-neutral-400 hover:border-neutral-700"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-xs font-bold text-emerald-300">{activeProduct.cartonTier.tierName} ★</p>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">
+                        MOQ {activeProduct.cartonTier.moq}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-neutral-400">{t.cartonSub}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-bold text-emerald-300">${activeProduct.cartonTier.unitPrice.toFixed(2)}/pc</p>
+                    <span className="text-[9px] text-emerald-400 font-bold">{t.factoryBottom}</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Fast-Pass Toggle */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-neutral-950 border border-neutral-800">
+              <div className="space-y-0.5">
+                <p className="text-xs font-bold text-neutral-200">{t.fastPassTitle}</p>
+                <p className="text-[10px] text-neutral-400">{t.fastPassSub}</p>
+              </div>
+              <input
+                type="checkbox"
+                checked={expressPass}
+                onChange={(e) => setExpressPass(e.target.checked)}
+                className="w-4 h-4 accent-red-600 rounded cursor-pointer"
+              />
+            </div>
+
+            {/* Price Calculations */}
+            <div className="space-y-2 border-t border-neutral-800 pt-3 text-xs">
+              <div className="flex justify-between text-neutral-400">
+                <span>{t.selectedOrder} ({currentOrder.label}):</span>
+                <span className="text-neutral-200 font-semibold">${subtotal.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-neutral-400">
+                <span>{t.logisticsFee}</span>
+                <span className="text-neutral-200 font-semibold">${speedPassFee.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-neutral-400">
+                <span>{t.escrowBadge}</span>
+                <span className="text-emerald-400 font-bold">{t.escrowFree}</span>
+              </div>
+              {totalSaved > 0 && (
+                <div className="flex justify-between text-emerald-400 font-bold bg-emerald-950/40 p-2 rounded-lg border border-emerald-900/50">
+                  <span>{t.marginSaved}</span>
+                  <span>-${totalSaved.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between text-sm font-extrabold text-white border-t border-neutral-800 pt-2">
+                <span>{t.totalDue}</span>
+                <span className="text-base text-red-400">${totalAmount.toFixed(2)}</span>
+              </div>
+            </div>
+
+            {/* Checkout Action */}
+            <button
+              onClick={() => {
+                setShowKhqrModal(true);
+                setPaymentStatus("IDLE");
+              }}
+              className="w-full py-3.5 rounded-2xl bg-red-600 hover:bg-red-500 active:scale-[0.98] text-white font-bold text-sm shadow-xl shadow-red-600/30 transition-all flex items-center justify-center gap-2"
+            >
+              <span>🇰🇭</span> {t.payKhqr} (${totalAmount.toFixed(2)})
+            </button>
+
+            <p className="text-[10px] text-center text-neutral-500">{t.escrowPromise}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Floating Social Proof Toast */}
+      <div className="fixed bottom-20 left-4 z-40 max-w-xs bg-neutral-900/95 backdrop-blur-md border border-red-500/30 rounded-2xl p-3 shadow-2xl transition-all duration-500 flex items-center gap-3">
+        <div className="w-9 h-9 rounded-full bg-red-600/20 border border-red-500/40 flex items-center justify-center text-base shrink-0">
+          🛍️
+        </div>
+        <div className="text-xs">
+          <p className="font-bold text-white leading-tight">
+            {currentToast.buyer} <span className="text-[10px] font-normal text-neutral-400">({currentToast.market})</span>
+          </p>
+          <p className="text-[11px] text-amber-300 font-semibold mt-0.5">
+            Locked {currentToast.qty} of {currentToast.item}
+          </p>
+          <p className="text-[9px] text-neutral-500 mt-0.5">Verified Bakong Escrow • {currentToast.time}</p>
+        </div>
+      </div>
+
+      {/* Bakong KHQR Modal */}
+      {showKhqrModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl relative">
+            <button
+              onClick={() => setShowKhqrModal(false)}
+              className="absolute top-4 right-4 text-neutral-400 hover:text-white text-lg font-bold"
+            >
+              ✕
+            </button>
+
+            <div className="text-center space-y-1">
+              <span className="text-2xl">🇰🇭</span>
+              <h3 className="text-lg font-black text-white">Bakong KHQR Universal</h3>
+              <p className="text-xs text-neutral-400">{t.scanHelp}</p>
+            </div>
+
+            {paymentStatus === "IDLE" ? (
+              <div className="space-y-4">
+                <div className="bg-white p-4 rounded-2xl mx-auto w-48 h-48 flex flex-col items-center justify-center shadow-inner relative">
+                  <div className="w-full h-full border-4 border-dashed border-neutral-400 rounded-xl flex flex-col items-center justify-center text-neutral-800 text-center p-2">
+                    <span className="text-3xl font-black mb-1">KHQR</span>
+                    <span className="text-[11px] font-bold text-red-600">BAKONG ESCROW</span>
+                    <span className="text-[10px] text-neutral-600 mt-1">${totalAmount.toFixed(2)} USD</span>
+                  </div>
+                </div>
+
+                <div className="text-center space-y-1">
+                  <p className="text-xs font-bold text-neutral-200">Total: ${totalAmount.toFixed(2)} USD</p>
+                  <p className="text-[10px] text-neutral-500">
+                    Carrier Assigned: <span className="text-neutral-300 font-semibold">{activeProduct.logisticsPartner}</span>
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => setPaymentStatus("SUCCESS")}
+                  className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-600/30 transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>⚡</span> {t.simulatePay}
+                </button>
+              </div>
+            ) : (
+              <div className="text-center space-y-3 py-4">
+                <div className="w-14 h-14 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-2xl border border-emerald-500/40">
+                  ✓
+                </div>
+                <h4 className="text-base font-bold text-white">{t.paymentLocked}</h4>
+                <p className="text-xs text-neutral-400">{t.paymentSuccessDesc}</p>
+                <div className="p-3 bg-neutral-950 rounded-xl border border-neutral-800 text-left text-xs space-y-1.5">
+                  <p className="text-neutral-400">{t.carrierLabel} <span className="text-white font-semibold">{trackingInfo.carrier}</span></p>
+                  <p className="text-neutral-400">{t.trackingLabel} <span className="text-emerald-400 font-mono font-bold">{trackingInfo.code}</span></p>
+                  <p className="text-neutral-400">{t.statusLabel} <span className="text-amber-400 font-semibold">{t.statusApproved}</span></p>
+                </div>
+                <button
+                  onClick={() => setShowKhqrModal(false)}
+                  className="w-full py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-white text-xs font-semibold cursor-pointer"
+                >
+                  {t.doneBtn}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Mobile Navigation Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 bg-neutral-950/90 backdrop-blur-md border-t border-neutral-800 py-2.5 px-6">
+        <div className="max-w-md mx-auto flex items-center justify-between text-xs">
+          <Link href="/marketplace" className="flex flex-col items-center gap-1 text-red-500 font-bold">
+            <span className="text-lg">🛒</span>
+            <span>{t.navMarket}</span>
+          </Link>
+          <Link href="/feed" className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors">
+            <span className="text-lg">📱</span>
+            <span>{t.navFeed}</span>
+          </Link>
+          <Link href="/studio" className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors">
+            <span className="text-lg">🎬</span>
+            <span>{t.navStudio}</span>
+          </Link>
+          <Link href="/wallet" className="flex flex-col items-center gap-1 text-neutral-400 hover:text-white transition-colors">
+            <span className="text-lg">💳</span>
+            <span>{t.navWallet}</span>
+          </Link>
+        </div>
+      </nav>
+    </main>
+  );
+}

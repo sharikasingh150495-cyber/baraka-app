@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Baraka Wholesale</string>
+    <string name="title_activity_main">Baraka Wholesale</string>
+    <string name="package_name">com.baraka.wholesale</string>
+    <string name="custom_url_scheme">com.baraka.wholesale</string>
+</resources>
